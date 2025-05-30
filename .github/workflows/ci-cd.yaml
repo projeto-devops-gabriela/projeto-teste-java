@@ -22,6 +22,10 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+      
+      - name: Permitir execução do mvnw
+        run: chmod +x ./mvnw
+        working-directory: demo
 
       - name: Build com Maven
         run: ./mvnw clean install
