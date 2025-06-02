@@ -35,8 +35,18 @@ jobs:
         run: ./mvnw test
         working-directory: demo
       
+      - name: Criar projeto no SonarCloud via API
+        run: |
+          curl -X POST "https://sonarcloud.io/api/projects/create" \
+            -u "${SONAR_TOKEN}:" \
+            -d "name=${{ github.repository_owner }}_${{ github.event.repository.name }}" \
+            -d "project=${{ github.repository_owner }}_${{ github.event.repository.name }}" \
+            -d "organization=${{ vars.ORGANIZATION_SONAR }}"
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      
       - name: Análise SonarCloud
-        run: ./mvnw sonar:sonar -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }} -Dsonar.organization=${{ vars.ORGANIZATION_SONAR }} -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${SONAR_TOKEN}
+        run: ./mvnw org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }} -Dsonar.organization=${{ vars.ORGANIZATION_SONAR }} -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${SONAR_TOKEN}
         working-directory: demo
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
