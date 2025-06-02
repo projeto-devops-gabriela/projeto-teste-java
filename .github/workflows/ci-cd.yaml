@@ -72,10 +72,10 @@ jobs:
           ./mvnw deploy -DskipTests --settings settings.xml -DaltDeploymentRepository=github::https://maven.pkg.github.com/${{ github.repository }}
         working-directory: demo
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AUTHENTICATOR_G_TOKEN: ${{ secrets.AUTHENTICATOR_G_TOKEN }}
 
       - name: Login no GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.AUTHENTICATOR_G_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build da imagem Docker
         run: docker build -t ghcr.io/${{ github.repository }}/demo-app:latest .
