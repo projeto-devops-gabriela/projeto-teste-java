@@ -57,11 +57,10 @@ jobs:
 
       - name: Definir branch main como principal no SonarCloud
         run: |
-          curl -X POST "https://sonarcloud.io/api/project_branches/update" \
+          curl -X POST "https://sonarcloud.io/api/projects/update" \
             -u "${SONAR_TOKEN}:" \
             -d "project=${{ github.repository_owner }}_${{ github.event.repository.name }}" \
-            -d "branch=main" \
-            -d "setMain=true"
+            -d "mainBranch=main"
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
