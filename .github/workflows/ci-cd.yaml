@@ -4,6 +4,7 @@
 name: CI
 
 on:
+  workflow_dispatch:
   push:
     branches: [ main ]
   pull_request:
@@ -46,7 +47,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       
       - name: Análise SonarCloud
-        run: ./mvnw org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }} -Dsonar.organization=${{ vars.ORGANIZATION_SONAR }} -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${SONAR_TOKEN}
+        run: ./mvnw org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }} -Dsonar.organization=${{ vars.ORGANIZATION_SONAR }} -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${SONAR_TOKEN} -Dsonar.branch.name=${{ github.ref_name }}
         working-directory: demo
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
