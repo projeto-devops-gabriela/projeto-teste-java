@@ -1,7 +1,5 @@
-# pipeline.yaml (exemplo genérico para CI/CD Java Maven)
-# Coloque este arquivo na raiz do projeto (ex: demo/.github/workflows/ci.yml para GitHub Actions)
-
-name: CI
+name: CI-CD Esteira Java com SonarCloud e Docker
+# Este workflow realiza o build, testes, análise de código com SonarCloud e deploy de uma aplicação Java usando Maven e Docker.
 
 on:
   workflow_dispatch:
@@ -12,13 +10,14 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
 
       - name: Desfazer shallow clone
+        shell: bash
         run: git fetch --unshallow
 
       - name: Configurar Java
@@ -26,20 +25,24 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      
+
       - name: Permitir execução do mvnw
+        shell: bash
         run: chmod +x ./mvnw
         working-directory: demo
 
       - name: Build com Maven
+        shell: bash
         run: ./mvnw clean install
         working-directory: demo
 
       - name: Executar testes
+        shell: bash
         run: ./mvnw test
         working-directory: demo
-      
+
       - name: Criar projeto no SonarCloud via API
+        shell: bash
         run: |
           curl -X POST "https://sonarcloud.io/api/projects/create" \
             -u "${SONAR_TOKEN}:" \
@@ -48,8 +51,9 @@ jobs:
             -d "organization=${{ vars.ORGANIZATION_SONAR }}"
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      
+
       - name: Análise SonarCloud
+        shell: bash
         run: |
           ./mvnw org.sonarsource.scanner.maven:sonar-maven-plugin:4.0.0.4121:sonar \
             -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }} \
@@ -68,10 +72,10 @@ jobs:
         with:
           name: demo-artifact
           path: demo/target/*.jar
-  
+
   deploy:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout código
@@ -84,6 +88,7 @@ jobs:
           java-version: '17'
 
       - name: Permitir execução do mvnw
+        shell: bash
         run: chmod +x ./mvnw
         working-directory: demo
 
@@ -94,18 +99,23 @@ jobs:
           path: demo/target
 
       - name: Publicar no GitHub Packages (Maven)
+        shell: bash
         run: |
-          ./mvnw deploy -DskipTests --settings settings.xml -DaltDeploymentRepository=github::https://maven.pkg.github.com/${{ github.repository }}
+          ./mvnw deploy -DskipTests --settings settings.xml \
+            -DaltDeploymentRepository=github::https://maven.pkg.github.com/${{ github.repository }}
         working-directory: demo
         env:
           AUTHENTICATOR_G_TOKEN: ${{ secrets.AUTHENTICATOR_G_TOKEN }}
 
       - name: Login no GitHub Container Registry
-        run: echo "${{ secrets.AUTHENTICATOR_G_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        shell: bash
+        run: echo "${{ secrets.AUTHENTICATOR_G_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
       - name: Build da imagem Docker
+        shell: bash
         run: docker build -t ghcr.io/${{ github.repository }}/demo-app:latest .
         working-directory: demo
 
       - name: Push da imagem Docker
+        shell: bash
         run: docker push ghcr.io/${{ github.repository }}/demo-app:latest
