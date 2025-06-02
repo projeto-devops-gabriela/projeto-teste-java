@@ -69,7 +69,7 @@ jobs:
 
       - name: Publicar no GitHub Packages (Maven)
         run: |
-          ./mvnw deploy -DskipTests --settings settings.xml
+          ./mvnw deploy -DskipTests --settings settings.xml -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/${{ github.repository }}
         working-directory: demo
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
