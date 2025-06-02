@@ -1,48 +1,5 @@
-# pipeline.yaml (exemplo genérico para CI/CD Java Maven)
-# Coloque este arquivo na raiz do projeto (ex: demo/.github/workflows/ci.yml para GitHub Actions)
+# ...existing code...
 
-name: CI
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout código
-        uses: actions/checkout@v4
-
-      - name: Configurar Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-      
-      - name: Permitir execução do mvnw
-        run: chmod +x ./mvnw
-        working-directory: demo
-
-      - name: Build com Maven
-        run: ./mvnw clean install
-        working-directory: demo
-
-      - name: Executar testes
-        run: ./mvnw test
-        working-directory: demo
-
-      - name: Publicar artefato
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: demo-artifact
-          path: demo/target/*.jar
-  
-  # ...existing code...
   deploy:
     needs: build
     runs-on: ubuntu-latest
