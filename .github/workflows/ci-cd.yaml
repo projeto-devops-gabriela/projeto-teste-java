@@ -39,6 +39,9 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@v2
         with:
           projectBaseDir: demo
+          args: >
+            -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }}
+            -Dsonar.organization=${{ vars.ORGANIZATION_SONAR }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
