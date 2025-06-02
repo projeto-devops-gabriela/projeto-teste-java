@@ -34,6 +34,13 @@ jobs:
       - name: Executar testes
         run: ./mvnw test
         working-directory: demo
+      
+      - name: Análise SonarCloud
+        uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          projectBaseDir: demo
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Publicar artefato
         if: success()
