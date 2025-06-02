@@ -57,6 +57,10 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Permitir execução do mvnw
+        run: chmod +x ./mvnw
+        working-directory: demo
+
       - name: Baixar artefato do build
         uses: actions/download-artifact@v4
         with:
