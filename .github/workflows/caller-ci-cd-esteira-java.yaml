@@ -1,0 +1,17 @@
+name: caller-ci-cd-esteira-java
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  call-ci-cd-esteira-java:
+    uses: projeto-devops-gabriela/esteiras-devops/.github/workflows/ci-cd-esteira-java.yaml@main
+    secrets: inherit
