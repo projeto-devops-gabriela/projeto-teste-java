@@ -12,6 +12,15 @@ permissions:
   packages: write
 
 jobs:
-  call-ci-cd-esteira-java:
-    uses: projeto-devops-gabriela/esteiras-devops/.github/workflows/ci-cd-esteira-java.yaml@main
+  # call-ci-cd-esteira-java:
+  #   uses: projeto-devops-gabriela/esteiras-devops/.github/workflows/ci-cd-esteira-java.yaml@main
+  #   secrets: inherit
+
+  call-build-java:
+    uses: projeto-devops-gabriela/esteiras-devops/.github/workflows/build-esteira-java.yaml@main
+    secrets: inherit
+
+  call-deploy-java:
+    needs: call-build-java
+    uses: projeto-devops-gabriela/esteiras-devops/.github/workflows/deploy-esteira-java.yaml@main
     secrets: inherit
